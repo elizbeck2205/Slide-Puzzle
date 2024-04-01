@@ -1,20 +1,21 @@
-from PriorityQueue import PriorityQueue
+#from PriorityQueue import PriorityQueue
 from StateNode import StateNode
 from math import sqrt
 from slide_puzzle import Board
 from copy import deepcopy
+import heapq
 
 class AStar:
     def __init__(self, initialNode, goalNode):
-        self.queue = PriorityQueue(initialNode)
+        self.queue = [initialNode]
         self.goalnode = goalNode
         self.hash_set = set()
         self.hash_set.add(initialNode)
         print()
 
     def execute(self):
-        while not self.queue.isEmpty():
-            currentNode = self.queue.dequeue()
+        while not len(self.queue) == 0:
+            currentNode = heapq.heappop(self.queue)
 
             # Add currentNode to hash_set
             self.hash_set.add(currentNode)
@@ -25,52 +26,46 @@ class AStar:
                 currentNode.getParent().print()
             print()
 
-            if currentNode.compareTo(self.goalnode) == 0:
+            if currentNode == self.goalnode:
                 return currentNode
 
             # Add currentNode's children to the queue
             
-            n = int(sqrt(currentNode.getSize()))
+            neighbors = self.neighbors(currentNode)
 
-            # Is right slide possible?
-            if currentNode.emptyTileIndex % n != 0:
+            for move_index in neighbors:
                 newNode = deepcopy(currentNode)
-                newNode.slide(newNode.emptyTileIndex - 1)
+                newNode.slide(move_index)
                 newNode.setParent(currentNode)
                 if newNode not in self.hash_set:
-                    self.queue.enqueue(newNode)
-                print()
-            
-            # Is left slide possible?
-            if currentNode.emptyTileIndex % n < n - 1:
-                newNode = deepcopy(currentNode)
-                newNode.slide(newNode.emptyTileIndex + 1)
-                newNode.setParent(currentNode)
-                if newNode not in self.hash_set:
-                    self.queue.enqueue(newNode)
-                print()
-            
-            # Is up slide possible?
-            if currentNode.emptyTileIndex < currentNode.getSize() - n:
-                newNode = deepcopy(currentNode)
-                newNode.slide(newNode.emptyTileIndex + n)
-                newNode.setParent(currentNode)
-                if newNode not in self.hash_set:
-                    self.queue.enqueue(newNode)
-                print()
-
-            # Is down slide possible?
-            if currentNode.emptyTileIndex > n - 1:
-                newNode = deepcopy(currentNode)
-                newNode.slide(newNode.emptyTileIndex - n)
-                newNode.setParent(currentNode)
-                if newNode not in self.hash_set:
-                    self.queue.enqueue(newNode)
-                print()
+                    heapq.heappush(self.queue, newNode)
+                    self.hash_set.add(newNode)
             
             print()
         
         return None
+    
+    def neighbors(self, node):
+        n = int(sqrt(node.getSize()))
+        neighbors = []
+
+        # Is right slide possible
+        if node.emptyTileIndex % n != 0:
+            neighbors.append(node.emptyTileIndex - 1)
+        
+        # Is left slide possible
+        if node.emptyTileIndex % n < n - 1:
+            neighbors.append(node.emptyTileIndex + 1)
+        
+        # Is up slide possible
+        if node.emptyTileIndex < node.getSize() - n:
+            neighbors.append(node.emptyTileIndex + n)
+        
+        # Is down slide possible
+        if node.emptyTileIndex > n - 1:
+            neighbors.append(node.emptyTileIndex - n)
+        
+        return neighbors
     
     
 if __name__ == '__main__':

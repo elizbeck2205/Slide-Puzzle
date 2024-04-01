@@ -7,29 +7,7 @@ class Board:
         self.blank_index = n*n-1
 
         self.configureBoard()
-    
-    # def swap(self, i):
-    #     if self.isValidSwap(i):
-    #         # swap
-    #         self.arr[self.blank_index] = self.arr[i]
-    #         self.arr[i] = self.n**2
 
-    #         # update blank index
-    #         self.blank_index = i
-
-
-    # def isValidSwap(self, i):
-    #     valid = False
-    #     n = self.n
-    #     blank_tile = n*n
-    #     blank_index = self.blank_index
-
-    #     if abs(i-blank_index) <= 4:
-    #         # Is i adjacent to the blank?
-    #         if self.arr[i-1] == blank_tile or self.arr[i+1] == blank_tile or i%n == blank_index%n:
-    #             valid = True
-
-    #     return valid
 
     def configureBoard(self):
         random.shuffle(self.arr)

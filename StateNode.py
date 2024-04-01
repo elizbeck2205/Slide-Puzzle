@@ -31,13 +31,8 @@ class StateNode:
     
         #print()
     
-    def compareTo(self, statenode2):
-        if (self.value > statenode2.value):
-            return 1
-        elif self.value < statenode2.value:
-            return -1
-        else:
-            return 0
+    def __lt__(self, other):
+        return self.value < other.value
     
     def slide(self, i):
         print()
